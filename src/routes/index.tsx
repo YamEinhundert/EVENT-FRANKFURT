@@ -89,15 +89,24 @@ function Index() {
       {/* Flyer */}
       <section className="border-y border-border bg-card/40">
         <div className="mx-auto flex max-w-3xl flex-col items-center px-6 py-20">
-          <a
-            href={flyerImg}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Event-Flyer in voller Größe öffnen"
-            className="block overflow-hidden rounded-xl border border-primary/60 shadow-[0_0_60px_-22px_var(--gold)] transition-transform hover:scale-[1.01]"
-          >
-            <img src={flyerImg} alt="Canablanca Select Frankfurt Event-Flyer" className="w-full" />
-          </a>
+          <div className="relative overflow-hidden rounded-xl border border-primary/60 shadow-[0_0_60px_-22px_var(--gold)]">
+            <img
+              src={flyerImg}
+              alt="Canablanca Select Frankfurt Event-Flyer mit QR-Code"
+              className="block w-full"
+            />
+            <span className="absolute bottom-[5.5%] left-[15.5%] w-[21%] bg-[#f7efdf] p-[1.2%]">
+              <QRCodeSVG
+                value="https://canablanca.eu"
+                size={220}
+                level="H"
+                bgColor="#f7efdf"
+                fgColor="#06170e"
+                className="h-auto w-full"
+                title="QR-Code zu canablanca.eu"
+              />
+            </span>
+          </div>
           <a
             href="#anmeldung"
             className="mt-10 rounded-lg bg-primary px-10 py-4 font-display text-xl tracking-widest text-primary-foreground transition-opacity hover:opacity-90"
@@ -148,21 +157,6 @@ function Index() {
           International Culture Event · 12.09.2026 · Frankfurt am Main · Zutritt ab 18 Jahren.
           Teilnahme nur im Rahmen der geltenden gesetzlichen Bestimmungen.
         </p>
-        <a
-          href="https://canablanca.eu"
-          aria-label="Canablanca-Webseite über QR-Code öffnen"
-          className="mt-8 inline-flex flex-col items-center rounded-xl bg-[#f7efdf] p-4 text-[#06170e] transition-transform hover:scale-[1.02]"
-        >
-          <QRCodeSVG
-            value="https://canablanca.eu"
-            size={160}
-            level="H"
-            bgColor="#f7efdf"
-            fgColor="#06170e"
-            title="QR-Code zu canablanca.eu"
-          />
-          <span className="mt-3 font-medium">canablanca.eu</span>
-        </a>
         <nav className="mt-6" aria-label="Rechtliche Informationen">
           <Link
             to="/impressum"
