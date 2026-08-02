@@ -32,6 +32,7 @@ const schema = z.object({
   name: z.string().trim().min(2, "Bitte Namen angeben").max(100),
   email: z.string().trim().email("Ungültige E-Mail-Adresse").max(255),
   telefon: z.string().trim().min(3, "Bitte Telefonnummer angeben").max(40),
+  zugangscode: z.string().trim().max(50).optional(),
   crew_anzahl: z.number().int().min(0).max(50).optional(),
 });
 
@@ -49,6 +50,7 @@ export function AnmeldeFormular() {
       name: String(fd.get("name") ?? ""),
       email: String(fd.get("email") ?? ""),
       telefon: String(fd.get("telefon") ?? ""),
+      zugangscode: String(fd.get("zugangscode") ?? ""),
       crew_anzahl: brauchtCrew ? Number(fd.get("crew_anzahl") ?? 0) : undefined,
     });
 
@@ -155,6 +157,20 @@ export function AnmeldeFormular() {
             required
             maxLength={40}
             className="h-11 rounded-lg border border-input bg-background px-3"
+          />
+        </div>
+        <div className="grid gap-2">
+          <label className="text-sm font-medium" htmlFor="zugangscode">
+            Zugangscode (optional)
+          </label>
+          <input
+            id="zugangscode"
+            name="zugangscode"
+            maxLength={50}
+            autoCapitalize="characters"
+            autoComplete="off"
+            spellCheck={false}
+            className="h-11 rounded-lg border border-input bg-background px-3 uppercase"
           />
         </div>
         {brauchtCrew && (

@@ -20,6 +20,7 @@ async function saveRegistration(request: Request) {
     const name = clean(payload["name"], 100);
     const email = clean(payload["email"], 255);
     const telefon = clean(payload["telefon"], 40);
+    const zugangscode = clean(payload["zugangscode"], 50).toUpperCase();
     const crewAnzahl = Number(payload["crew_anzahl"] ?? 0);
     const brauchtCrew = anmeldeart === "artist" || anmeldeart === "aussteller";
 
@@ -33,24 +34,51 @@ async function saveRegistration(request: Request) {
       return Response.json({ error: "Bitte Pflichtfelder prüfen." }, { status: 400 });
     }
 
-    await cloudflareEnv.DB.prepare(
-      `
+    const db = cloudflareEnv.DB.withSession("first-primary");
+
+    await db
+      .prepare(
+        `
       CREATE TABLE IF NOT EXISTS anmeldungen (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         anmeldeart TEXT NOT NULL,
         name TEXT NOT NULL,
         email TEXT NOT NULL,
         telefon TEXT NOT NULL,
+        zugangscode TEXT,
         crew_anzahl INTEGER,
         erstellt_am TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       )
     `,
-    ).run();
+      )
+      .run();
 
-    await cloudflareEnv.DB.prepare(
-      "INSERT INTO anmeldungen (anmeldeart, name, email, telefon, crew_anzahl) VALUES (?, ?, ?, ?, ?)",
-    )
-      .bind(anmeldeart, name, email, telefon, brauchtCrew ? crewAnzahl : null)
+    const columns = await db.prepare("PRAGMA table_info(anmeldungen)").all<{ name: string }>();
+
+    if (!columns.results.some((column) => column.name === "zugangscode")) {
+      try {
+        await db.prepare("ALTER TABLE anmeldungen ADD COLUMN zugangscode TEXT").run();
+      } catch (error) {
+        const refreshedColumns = await db
+          .prepare("PRAGMA table_info(anmeldungen)")
+          .all<{ name: string }>();
+        if (!refreshedColumns.results.some((column) => column.name === "zugangscode")) {
+          throw error;
+        }
+      }
+    }
+
+    await db
+      .prepare(
+        "CREATE INDEX IF NOT EXISTS anmeldungen_zugangscode_idx ON anmeldungen (zugangscode)",
+      )
+      .run();
+
+    await db
+      .prepare(
+        "INSERT INTO anmeldungen (anmeldeart, name, email, telefon, zugangscode, crew_anzahl) VALUES (?, ?, ?, ?, ?, ?)",
+      )
+      .bind(anmeldeart, name, email, telefon, zugangscode || null, brauchtCrew ? crewAnzahl : null)
       .run();
 
     return Response.json({ ok: true }, { status: 201 });

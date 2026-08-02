@@ -75,7 +75,8 @@ function Datenschutz() {
           <h2 className={headingClass}>3. Anmeldung zur Veranstaltung</h2>
           <p>
             Bei einer Anmeldung verarbeiten wir die gewählte Anmeldeart, deinen Namen, deine
-            E-Mail-Adresse und deine Telefonnummer. Bei Artists und Ausstellern wird zusätzlich die
+            E-Mail-Adresse und deine Telefonnummer. Ein freiwillig angegebener Zugangscode wird zur
+            Zuordnung der Empfehlung gespeichert. Bei Artists und Ausstellern wird zusätzlich die
             Anzahl der Crew-Mitglieder gespeichert.
           </p>
           <p>
@@ -132,7 +133,7 @@ function Datenschutz() {
           </p>
         </section>
 
-        <p className="mt-12 text-sm text-muted-foreground">Stand: 2. August 2026</p>
+        <p className="mt-12 text-sm text-muted-foreground">Stand: 3. August 2026</p>
       </article>
     </main>
   );
