@@ -1,0 +1,69 @@
+@import "tailwindcss" source(none);
+@source "../src";
+
+@theme inline {
+  --font-display: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --color-gold: var(--gold);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-input: var(--input);
+}
+
+:root {
+  --radius: 0.75rem;
+  --gold: oklch(0.82 0.13 88);
+  --background: oklch(0.16 0.02 150);
+  --foreground: oklch(0.96 0.01 100);
+  --card: oklch(0.2 0.025 150);
+  --card-foreground: oklch(0.96 0.01 100);
+  --primary: oklch(0.82 0.13 88);
+  --primary-foreground: oklch(0.17 0.03 150);
+  --muted: oklch(0.26 0.03 150);
+  --muted-foreground: oklch(0.75 0.02 130);
+  --accent: oklch(0.45 0.12 145);
+  --border: oklch(0.32 0.04 150);
+  --input: oklch(0.32 0.04 150);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: 0.04em;
+  }
+}
+
+@utility gold-gradient-text {
+  background-image: linear-gradient(100deg, oklch(0.92 0.09 92), oklch(0.74 0.14 78));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
