@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Clock } from "lucide-react";
 import logoImg from "@/assets/canablanca-logo.png";
 import flyerImg from "@/assets/hash-cup-flyer.png";
@@ -38,9 +38,7 @@ function Index() {
             alt="Canablanca Wappen mit zwei Löwen"
             className="mx-auto mb-6 h-auto w-full max-w-sm mix-blend-screen"
           />
-          <p className="text-sm uppercase tracking-[0.4em] text-primary">
-            präsentiert
-          </p>
+          <p className="text-sm uppercase tracking-[0.4em] text-primary">präsentiert</p>
           <h1 className="mt-6 gold-gradient-text text-6xl leading-none sm:text-8xl">
             Canablanca
             <br />
@@ -128,6 +126,23 @@ function Index() {
           International Hash Culture Event · 12.09.2026 · Frankfurt am Main · Zutritt ab 18 Jahren.
           Teilnahme nur im Rahmen der geltenden gesetzlichen Bestimmungen.
         </p>
+        <nav className="mt-6" aria-label="Rechtliche Informationen">
+          <Link
+            to="/impressum"
+            className="underline decoration-primary/60 underline-offset-4 transition-colors hover:text-primary"
+          >
+            Impressum
+          </Link>
+          <span aria-hidden="true" className="mx-3">
+            ·
+          </span>
+          <Link
+            to="/datenschutz"
+            className="underline decoration-primary/60 underline-offset-4 transition-colors hover:text-primary"
+          >
+            Datenschutz
+          </Link>
+        </nav>
       </footer>
     </main>
   );

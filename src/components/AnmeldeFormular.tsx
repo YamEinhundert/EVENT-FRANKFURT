@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { toast } from "sonner";
 
@@ -183,7 +184,15 @@ export function AnmeldeFormular() {
         {loading ? "Wird gesendet…" : "Anmeldung absenden"}
       </button>
       <p className="text-center text-xs text-muted-foreground">
-        Mit dem Absenden werden deine Angaben zur Bearbeitung der Anmeldung gespeichert.
+        Mit dem Absenden werden deine Angaben zur Bearbeitung der Anmeldung gespeichert. Weitere
+        Informationen findest du in unserer{" "}
+        <Link
+          to="/datenschutz"
+          className="underline decoration-primary/60 underline-offset-2 hover:text-primary"
+        >
+          Datenschutzerklärung
+        </Link>
+        .
       </p>
     </form>
   );

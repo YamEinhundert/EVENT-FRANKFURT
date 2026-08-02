@@ -10,6 +10,10 @@ import {
 import { type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 
+import "@fontsource/barlow/400.css";
+import "@fontsource/barlow/500.css";
+import "@fontsource/barlow/600.css";
+import "@fontsource/bebas-neue/400.css";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -97,12 +101,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&display=swap",
-      },
       {
         rel: "stylesheet",
         href: appCss,
