@@ -6,6 +6,11 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ command }) => ({
+  build: {
+    rolldownOptions: {
+      external: ["cloudflare:workers"],
+    },
+  },
   plugins: [
     tailwindcss(),
     tsconfigPaths({ projects: ["./tsconfig.json"] }),

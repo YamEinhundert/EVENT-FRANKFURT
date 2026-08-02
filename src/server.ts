@@ -1,5 +1,7 @@
 import "./lib/error-capture";
 
+import { env as cloudflareEnv } from "cloudflare:workers";
+
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 
@@ -7,31 +9,18 @@ type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
-type D1Statement = {
-  bind: (...values: unknown[]) => D1Statement;
-  run: () => Promise<unknown>;
-};
-
-type ServerEnv = {
-  DB?: { prepare: (query: string) => D1Statement };
-};
-
 function clean(value: unknown, max: number) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
-async function saveRegistration(request: Request, env: ServerEnv) {
-  if (!env.DB) {
-    return Response.json({ error: "Datenbank nicht verbunden." }, { status: 503 });
-  }
-
+async function saveRegistration(request: Request) {
   try {
     const payload = (await request.json()) as Record<string, unknown>;
-    const anmeldeart = clean(payload.anmeldeart, 30);
-    const name = clean(payload.name, 100);
-    const email = clean(payload.email, 255);
-    const telefon = clean(payload.telefon, 40);
-    const crewAnzahl = Number(payload.crew_anzahl ?? 0);
+    const anmeldeart = clean(payload["anmeldeart"], 30);
+    const name = clean(payload["name"], 100);
+    const email = clean(payload["email"], 255);
+    const telefon = clean(payload["telefon"], 40);
+    const crewAnzahl = Number(payload["crew_anzahl"] ?? 0);
     const brauchtCrew = anmeldeart === "artist" || anmeldeart === "aussteller";
 
     if (
@@ -44,7 +33,7 @@ async function saveRegistration(request: Request, env: ServerEnv) {
       return Response.json({ error: "Bitte Pflichtfelder prüfen." }, { status: 400 });
     }
 
-    await env.DB.prepare(
+    await cloudflareEnv.DB.prepare(
       `
       CREATE TABLE IF NOT EXISTS anmeldungen (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,7 +47,7 @@ async function saveRegistration(request: Request, env: ServerEnv) {
     `,
     ).run();
 
-    await env.DB.prepare(
+    await cloudflareEnv.DB.prepare(
       "INSERT INTO anmeldungen (anmeldeart, name, email, telefon, crew_anzahl) VALUES (?, ?, ?, ?, ?)",
     )
       .bind(anmeldeart, name, email, telefon, brauchtCrew ? crewAnzahl : null)
@@ -109,11 +98,11 @@ function isH3SwallowedErrorBody(body: string): boolean {
 }
 
 export default {
-  async fetch(request: Request, env: ServerEnv, ctx: unknown) {
+  async fetch(request: Request, env: unknown, ctx: unknown): Promise<Response> {
     try {
       const url = new URL(request.url);
       if (url.pathname === "/api/anmeldungen" && request.method === "POST") {
-        return await saveRegistration(request, env);
+        return await saveRegistration(request);
       }
 
       const handler = await getServerEntry();

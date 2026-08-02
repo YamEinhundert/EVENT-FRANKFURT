@@ -39,7 +39,7 @@ function Index() {
             className="mx-auto mb-6 h-auto w-full max-w-sm mix-blend-screen"
           />
           <p className="text-sm uppercase tracking-[0.4em] text-primary">
-            canablanca.eu präsentiert
+            präsentiert
           </p>
           <h1 className="mt-6 gold-gradient-text text-6xl leading-none sm:text-8xl">
             Canablanca
