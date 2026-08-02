@@ -95,13 +95,14 @@ function Index() {
               alt="Canablanca Select Frankfurt Event-Flyer mit QR-Code"
               className="block w-full"
             />
-            <span className="absolute bottom-[5.5%] left-[15.5%] w-[21%] bg-[#f7efdf] p-[1.2%]">
+            <span className="pointer-events-none absolute bottom-[6.1%] left-[15.9%] block w-[17%]">
               <QRCodeSVG
                 value="https://canablanca.eu"
                 size={220}
                 level="H"
-                bgColor="#f7efdf"
-                fgColor="#06170e"
+                bgColor="transparent"
+                fgColor="#111812"
+                marginSize={1}
                 className="h-auto w-full"
                 title="QR-Code zu canablanca.eu"
               />
