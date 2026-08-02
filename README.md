@@ -1,6 +1,6 @@
 # Canablanca Select Frankfurt
 
-Landingpage und Anmeldung für Canablanca Select, das International Hash Culture Event am 12.09.2026 in Frankfurt. Die Anwendung läuft als TanStack-Start-App auf Cloudflare Workers und speichert Anmeldungen in Cloudflare D1.
+Landingpage und Anmeldung für Canablanca Select, das International Culture Event am 12.09.2026 in Frankfurt. Die Anwendung läuft als TanStack-Start-App auf Cloudflare Workers und speichert Anmeldungen in Cloudflare D1.
 
 ## Lokal starten
 

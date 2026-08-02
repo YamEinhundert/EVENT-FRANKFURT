@@ -1,27 +1,49 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Clock } from "lucide-react";
-import logoImg from "@/assets/canablanca-logo.png";
+import { QRCodeSVG } from "qrcode.react";
 import flyerImg from "@/assets/hash-cup-flyer.png";
 import { AnmeldeFormular, ANMELDEARTEN } from "@/components/AnmeldeFormular";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Canablanca Select 2026 – Frankfurt | Anmeldung" },
+      { title: "Canablanca Select 2026 – Frankfurt" },
       {
         name: "description",
         content:
-          "Canablanca Select – International Hash Culture Event am 12.09.2026 in Frankfurt. Anmeldung für Artists, Aussteller, VIP und Gästeliste.",
+          "Canablanca Select – International Culture Event am 12.09.2026 in Frankfurt. Anmeldung für Artists, Aussteller, VIP und Gästeliste.",
       },
-      { property: "og:title", content: "Canablanca Select 2026 – Frankfurt | Anmeldung" },
+      { property: "og:title", content: "Canablanca Select 2026 – Frankfurt" },
       {
         property: "og:description",
-        content:
-          "Canablanca Select – International Hash Culture Event am 12.09.2026 in Frankfurt. Anmeldung für Artists, Aussteller, VIP und Gästeliste.",
+        content: "International Culture Event · 12. September 2026 · Frankfurt am Main",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://canablanca.eu/" },
+      { property: "og:site_name", content: "Canablanca Select" },
+      { property: "og:locale", content: "de_DE" },
+      {
+        property: "og:image",
+        content: "https://canablanca.eu/canablanca-select-2026-preview.png",
+      },
+      {
+        property: "og:image:secure_url",
+        content: "https://canablanca.eu/canablanca-select-2026-preview.png",
+      },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: "800" },
+      { property: "og:image:height", content: "684" },
+      {
+        property: "og:image:alt",
+        content: "Canablanca Select 2026 – Wappen mit zwei Löwen",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:image",
+        content: "https://canablanca.eu/canablanca-select-2026-preview.png",
+      },
     ],
+    links: [{ rel: "canonical", href: "https://canablanca.eu/" }],
   }),
   component: Index,
 });
@@ -34,7 +56,7 @@ function Index() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(211,167,74,0.11),transparent_42%),linear-gradient(to_bottom,#06170e,#031008)]" />
         <div className="relative mx-auto max-w-5xl px-6 py-28 text-center sm:py-36">
           <img
-            src={logoImg}
+            src="/canablanca-select-2026-preview.png"
             alt="Canablanca Wappen mit zwei Löwen"
             className="mx-auto mb-6 h-auto w-full max-w-sm mix-blend-screen"
           />
@@ -123,9 +145,24 @@ function Index() {
       <footer className="mx-auto max-w-6xl px-6 py-12 text-sm text-muted-foreground">
         <p className="font-display text-xl tracking-widest text-primary">CANABLANCA SELECT</p>
         <p className="mt-2">
-          International Hash Culture Event · 12.09.2026 · Frankfurt am Main · Zutritt ab 18 Jahren.
+          International Culture Event · 12.09.2026 · Frankfurt am Main · Zutritt ab 18 Jahren.
           Teilnahme nur im Rahmen der geltenden gesetzlichen Bestimmungen.
         </p>
+        <a
+          href="https://canablanca.eu"
+          aria-label="Canablanca-Webseite über QR-Code öffnen"
+          className="mt-8 inline-flex flex-col items-center rounded-xl bg-[#f7efdf] p-4 text-[#06170e] transition-transform hover:scale-[1.02]"
+        >
+          <QRCodeSVG
+            value="https://canablanca.eu"
+            size={160}
+            level="H"
+            bgColor="#f7efdf"
+            fgColor="#06170e"
+            title="QR-Code zu canablanca.eu"
+          />
+          <span className="mt-3 font-medium">canablanca.eu</span>
+        </a>
         <nav className="mt-6" aria-label="Rechtliche Informationen">
           <Link
             to="/impressum"

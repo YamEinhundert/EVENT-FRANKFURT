@@ -101,6 +101,11 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown): Promise<Response> {
     try {
       const url = new URL(request.url);
+      if (url.hostname === "www.canablanca.eu" || url.protocol === "http:") {
+        const canonicalUrl = new URL(`${url.pathname}${url.search}`, "https://canablanca.eu");
+        return Response.redirect(canonicalUrl, 301);
+      }
+
       if (url.pathname === "/api/anmeldungen" && request.method === "POST") {
         return await saveRegistration(request);
       }
