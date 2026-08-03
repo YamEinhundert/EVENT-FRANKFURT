@@ -29,6 +29,7 @@ async function saveRegistration(request: Request) {
       name.length < 2 ||
       !email.includes("@") ||
       telefon.length < 3 ||
+      zugangscode.length < 2 ||
       (brauchtCrew && (!Number.isInteger(crewAnzahl) || crewAnzahl < 0 || crewAnzahl > 50))
     ) {
       return Response.json({ error: "Bitte Pflichtfelder prüfen." }, { status: 400 });

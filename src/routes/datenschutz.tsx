@@ -75,9 +75,9 @@ function Datenschutz() {
           <h2 className={headingClass}>3. Anmeldung zur Veranstaltung</h2>
           <p>
             Bei einer Anmeldung verarbeiten wir die gewählte Anmeldeart, deinen Namen, deine
-            E-Mail-Adresse und deine Telefonnummer. Ein freiwillig angegebener Zugangscode wird zur
-            Zuordnung der Empfehlung gespeichert. Bei Artists und Ausstellern wird zusätzlich die
-            Anzahl der Crew-Mitglieder gespeichert.
+            E-Mail-Adresse und deine Telefonnummer. Der Zugangscode wird zur Zuordnung der
+            Empfehlung gespeichert. Bei Artists und Ausstellern wird zusätzlich die Anzahl der
+            Crew-Mitglieder gespeichert.
           </p>
           <p>
             Die Daten werden zur Prüfung, Bearbeitung und Bestätigung der Anmeldung sowie zur

@@ -32,7 +32,7 @@ const schema = z.object({
   name: z.string().trim().min(2, "Bitte Namen angeben").max(100),
   email: z.string().trim().email("Ungültige E-Mail-Adresse").max(255),
   telefon: z.string().trim().min(3, "Bitte Telefonnummer angeben").max(40),
-  zugangscode: z.string().trim().max(50).optional(),
+  zugangscode: z.string().trim().min(2, "Bitte Zugangscode angeben").max(50),
   crew_anzahl: z.number().int().min(0).max(50).optional(),
 });
 
@@ -161,11 +161,13 @@ export function AnmeldeFormular() {
         </div>
         <div className="grid gap-2">
           <label className="text-sm font-medium" htmlFor="zugangscode">
-            Zugangscode (optional)
+            Zugangscode *
           </label>
           <input
             id="zugangscode"
             name="zugangscode"
+            required
+            minLength={2}
             maxLength={50}
             autoCapitalize="characters"
             autoComplete="off"
