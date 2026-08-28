@@ -93,7 +93,7 @@ function Index() {
             <img
               src={flyerImg}
               alt="Canablanca Select Frankfurt Event-Flyer mit QR-Code"
-              className="block w-full"
+              className="block max-h-[90vh] w-auto max-w-full object-contain"
             />
             <span className="pointer-events-none absolute bottom-[6.1%] left-[15.9%] block w-[17%]">
               <QRCodeSVG
