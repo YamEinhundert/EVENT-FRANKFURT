@@ -3,6 +3,7 @@ import { CalendarDays, MapPin, Clock } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import flyerImg from "@/assets/hash-cup-flyer.png";
 import { WeeztixShop } from "@/components/WeeztixShop";
+import { EventCountdown } from "@/components/EventCountdown";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -77,6 +78,7 @@ function Index() {
               <Clock className="size-4 text-primary" /> 11:00 – 02:00 Uhr
             </span>
           </div>
+          <EventCountdown />
           <a
             href="#anmeldung"
             className="mt-10 inline-block rounded-lg bg-primary px-10 py-4 font-display text-xl tracking-widest text-primary-foreground transition-opacity hover:opacity-90"
@@ -119,7 +121,7 @@ function Index() {
 
       {/* Tickets und Anmeldung */}
       <section id="anmeldung" className="border-t border-border bg-card/40">
-        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
+        <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
           <WeeztixShop />
         </div>
       </section>
