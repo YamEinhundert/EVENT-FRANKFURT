@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarDays, MapPin, Clock } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import flyerImg from "@/assets/hash-cup-flyer.png";
-import { AnmeldeFormular, ANMELDEARTEN } from "@/components/AnmeldeFormular";
+import { WeeztixShop } from "@/components/WeeztixShop";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Canablanca Select – International Culture Event am 12.09.2026 in Frankfurt. Anmeldung für Artists, Aussteller, VIP und Gästeliste.",
+          "Canablanca Select – International Culture Event am 12.09.2026 in Frankfurt. Tickets direkt online über Weeztix.",
       },
       { property: "og:title", content: "Canablanca Select 2026 – Frankfurt" },
       {
@@ -117,38 +117,10 @@ function Index() {
         </div>
       </section>
 
-      {/* Anmeldearten */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
-        <h2 className="text-4xl text-primary sm:text-5xl">Anmeldung</h2>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {ANMELDEARTEN.map((art) => (
-            <div
-              key={art.id}
-              className={`flex flex-col rounded-2xl border bg-card p-8 ${
-                "highlight" in art && art.highlight
-                  ? "border-primary shadow-[0_0_40px_-15px_var(--gold)]"
-                  : "border-border"
-              }`}
-            >
-              <h3 className="text-3xl text-primary">{art.name}</h3>
-              <a
-                href="#anmeldung"
-                className="mt-8 rounded-lg border border-primary px-6 py-3 text-center font-display text-lg tracking-widest text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-              >
-                {art.button}
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Anmeldung */}
+      {/* Tickets und Anmeldung */}
       <section id="anmeldung" className="border-t border-border bg-card/40">
-        <div className="mx-auto max-w-3xl px-6 py-20">
-          <h2 className="text-4xl text-primary sm:text-5xl">Anmeldeformular</h2>
-          <div className="mt-10">
-            <AnmeldeFormular />
-          </div>
+        <div className="mx-auto max-w-5xl px-4 py-20 sm:px-6">
+          <WeeztixShop />
         </div>
       </section>
 
