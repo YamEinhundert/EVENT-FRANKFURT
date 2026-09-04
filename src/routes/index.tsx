@@ -110,12 +110,6 @@ function Index() {
               />
             </span>
           </div>
-          <a
-            href="#anmeldung"
-            className="mt-10 rounded-lg bg-primary px-10 py-4 font-display text-xl tracking-widest text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            Jetzt anmelden
-          </a>
         </div>
       </section>
 
