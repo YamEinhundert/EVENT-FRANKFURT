@@ -13,6 +13,129 @@ function clean(value: unknown, max: number) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
+type WeeztixOrder = {
+  guid?: unknown;
+  shop_id?: unknown;
+  firstname?: unknown;
+  lastname?: unknown;
+  email?: unknown;
+  status?: unknown;
+  is_complete?: unknown;
+  created_at?: unknown;
+  tickets?: unknown;
+  metadata?: unknown;
+};
+
+function findMetadataValue(value: unknown, wantedKeys: string[]): string {
+  const wanted = new Set(wantedKeys.map((key) => key.toLowerCase()));
+  const visit = (node: unknown): string => {
+    if (!node || typeof node !== "object") return "";
+    if (Array.isArray(node)) {
+      for (const item of node) {
+        const found = visit(item);
+        if (found) return found;
+      }
+      return "";
+    }
+    const record = node as Record<string, unknown>;
+    const label = clean(record.name ?? record.label ?? record.key, 100).toLowerCase();
+    if (wanted.has(label)) {
+      return clean(record.value ?? record.val ?? record.answer, 255);
+    }
+    for (const [key, child] of Object.entries(record)) {
+      if (wanted.has(key.toLowerCase())) {
+        const direct = clean(child, 255);
+        if (direct) return direct;
+      }
+      const found = visit(child);
+      if (found) return found;
+    }
+    return "";
+  };
+  return visit(value);
+}
+
+function detectTicketType(order: WeeztixOrder) {
+  const raw = JSON.stringify(order.tickets ?? []).toLowerCase();
+  if (raw.includes("artist")) return "artist";
+  if (raw.includes("aussteller") || raw.includes("exhibitor")) return "aussteller";
+  if (raw.includes("vip")) return "vip";
+  if (raw.includes("gästeliste") || raw.includes("gaesteliste") || raw.includes("guestlist")) {
+    return "gaesteliste";
+  }
+  return "ticket";
+}
+
+async function importWeeztixOrder(request: Request) {
+  const configuredNonce = clean(
+    (cloudflareEnv as unknown as { WEEZTIX_WEBHOOK_NONCE?: string }).WEEZTIX_WEBHOOK_NONCE,
+    255,
+  );
+  const receivedNonce = clean(request.headers.get("OpenTicket-Identifier"), 255);
+
+  if (!configuredNonce) {
+    console.error("WEEZTIX_WEBHOOK_NONCE is not configured");
+    return Response.json({ error: "Webhook nicht konfiguriert." }, { status: 503 });
+  }
+  if (!receivedNonce || receivedNonce !== configuredNonce) {
+    return Response.json({ error: "Nicht autorisiert." }, { status: 401 });
+  }
+
+  try {
+    const order = (await request.json()) as WeeztixOrder;
+    const externalId = clean(order.guid, 100);
+    const email = clean(order.email, 255).toLowerCase();
+    const name = `${clean(order.firstname, 100)} ${clean(order.lastname, 100)}`.trim();
+    const phone = findMetadataValue(order.metadata ?? order, [
+      "telefon",
+      "telefonnummer",
+      "phone",
+      "phone number",
+      "mobile",
+      "mobilnummer",
+    ]);
+    const status = clean(order.status, 50).toLowerCase();
+
+    if (!externalId || !email.includes("@") || name.length < 2) {
+      return Response.json({ error: "Unvollständige Bestelldaten." }, { status: 400 });
+    }
+    if (order.is_complete === false || (status && !["paid", "complete", "completed"].includes(status))) {
+      return Response.json({ ok: true, ignored: true });
+    }
+
+    const db = cloudflareEnv.DB.withSession("first-primary");
+    await db.prepare("ALTER TABLE anmeldungen ADD COLUMN quelle TEXT").run().catch(() => undefined);
+    await db.prepare("ALTER TABLE anmeldungen ADD COLUMN externe_id TEXT").run().catch(() => undefined);
+    await db.prepare("ALTER TABLE anmeldungen ADD COLUMN ticketanzahl INTEGER").run().catch(() => undefined);
+    await db
+      .prepare("CREATE UNIQUE INDEX IF NOT EXISTS anmeldungen_externe_id_idx ON anmeldungen (externe_id)")
+      .run();
+
+    const ticketCount = Array.isArray(order.tickets) ? order.tickets.length : 1;
+    await db
+      .prepare(
+        `INSERT OR IGNORE INTO anmeldungen
+          (anmeldeart, name, email, telefon, zugangscode, crew_anzahl, erstellt_am, quelle, externe_id, ticketanzahl)
+         VALUES (?, ?, ?, ?, NULL, NULL, ?, 'weeztix', ?, ?)`,
+      )
+      .bind(
+        detectTicketType(order),
+        name,
+        email,
+        phone,
+        clean(order.created_at, 50) || new Date().toISOString(),
+        externalId,
+        ticketCount,
+      )
+      .run();
+
+    return Response.json({ ok: true });
+  } catch (error) {
+    console.error(error);
+    return Response.json({ error: "Bestellung konnte nicht importiert werden." }, { status: 500 });
+  }
+}
+
 async function saveRegistration(request: Request) {
   try {
     const payload = (await request.json()) as Record<string, unknown>;
@@ -137,6 +260,10 @@ export default {
 
       if (url.pathname === "/api/anmeldungen" && request.method === "POST") {
         return await saveRegistration(request);
+      }
+
+      if (url.pathname === "/api/weeztix" && request.method === "POST") {
+        return await importWeeztixOrder(request);
       }
 
       const handler = await getServerEntry();
