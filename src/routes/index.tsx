@@ -75,7 +75,7 @@ function Index() {
               <MapPin className="size-4 text-primary" /> Frankfurt am Main
             </span>
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-2">
-              <Clock className="size-4 text-primary" /> 11:00 – 02:00 Uhr
+              <Clock className="size-4 text-primary" /> 12:00 – 02:00 Uhr
             </span>
           </div>
           <EventCountdown />
