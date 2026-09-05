@@ -15,6 +15,18 @@ CREATE INDEX IF NOT EXISTS anmeldungen_erstellt_am_idx
 CREATE INDEX IF NOT EXISTS anmeldungen_zugangscode_idx
   ON anmeldungen (zugangscode);
 
+CREATE TABLE IF NOT EXISTS tageskasse_anmeldungen (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  telefon TEXT NOT NULL,
+  personen_anzahl INTEGER NOT NULL CHECK (personen_anzahl BETWEEN 1 AND 10),
+  erstellt_am TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS tageskasse_anmeldungen_erstellt_am_idx
+  ON tageskasse_anmeldungen (erstellt_am DESC);
+
 CREATE TABLE IF NOT EXISTS weeztix_artist (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   ticket_datensatz_id TEXT NOT NULL UNIQUE,
