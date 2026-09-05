@@ -61,7 +61,7 @@ export function TageskasseForm() {
             Tages- &amp; Abendkasse
           </span>
           <span className="mt-1 block text-sm text-muted-foreground">
-            Vor Ort zahlen · Einlass nur mit vorheriger Anmeldung
+            Vor Ort zahlen · Einlass nur nach Anmeldung
           </span>
         </span>
         <ChevronDown className="size-5 shrink-0 text-primary transition-transform group-open:rotate-180" />
@@ -89,8 +89,8 @@ export function TageskasseForm() {
           <form onSubmit={onSubmit} className="space-y-5">
             <div>
               <p className="text-sm leading-6 text-muted-foreground">
-                Melde dich vorab für die Tages- oder Abendkasse an. Ohne vorherige Anmeldung ist
-                kein Einlass über die Tages- oder Abendkasse möglich. Bezahlt wird vor Ort.
+                Melde dich hier vorab an. Ohne vorherige Anmeldung ist kein Einlass möglich.
+                Bezahlt wird vor Ort.
               </p>
             </div>
 
@@ -149,7 +149,7 @@ export function TageskasseForm() {
               disabled={loading}
               className="w-full rounded-lg bg-primary px-6 py-3 font-display text-lg tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
             >
-              {loading ? "Wird gespeichert…" : "Für die Tageskasse vormerken"}
+              {loading ? "Wird gespeichert…" : "Jetzt anmelden"}
             </button>
             <p className="text-center text-xs leading-5 text-muted-foreground">
               Mit dem Absenden werden deine Angaben zur Bearbeitung der Vormerkung gespeichert. Mehr
