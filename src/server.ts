@@ -359,6 +359,60 @@ async function saveRegistration(request: Request) {
   }
 }
 
+async function saveBoxOfficeRegistration(request: Request) {
+  try {
+    const payload = (await request.json()) as Record<string, unknown>;
+    const name = clean(payload["name"], 100);
+    const email = clean(payload["email"], 255).toLowerCase();
+    const telefon = clean(payload["telefon"], 40);
+    const personenAnzahl = Number(payload["personen_anzahl"]);
+
+    if (
+      name.length < 2 ||
+      !email.includes("@") ||
+      telefon.length < 3 ||
+      !Number.isInteger(personenAnzahl) ||
+      personenAnzahl < 1 ||
+      personenAnzahl > 10
+    ) {
+      return Response.json({ error: "Bitte Pflichtfelder prüfen." }, { status: 400 });
+    }
+
+    const db = cloudflareEnv.DB.withSession("first-primary");
+    await db
+      .prepare(
+        `CREATE TABLE IF NOT EXISTS tageskasse_anmeldungen (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          telefon TEXT NOT NULL,
+          personen_anzahl INTEGER NOT NULL,
+          erstellt_am TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
+      )
+      .run();
+    await db
+      .prepare(
+        "CREATE INDEX IF NOT EXISTS tageskasse_anmeldungen_erstellt_am_idx ON tageskasse_anmeldungen (erstellt_am DESC)",
+      )
+      .run();
+    await db
+      .prepare(
+        "INSERT INTO tageskasse_anmeldungen (name, email, telefon, personen_anzahl) VALUES (?, ?, ?, ?)",
+      )
+      .bind(name, email, telefon, personenAnzahl)
+      .run();
+
+    return Response.json({ ok: true }, { status: 201 });
+  } catch (error) {
+    console.error(error);
+    return Response.json(
+      { error: "Tageskassen-Anmeldung konnte nicht gespeichert werden." },
+      { status: 500 },
+    );
+  }
+}
+
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 async function getServerEntry(): Promise<ServerEntry> {
@@ -407,6 +461,10 @@ export default {
 
       if (url.pathname === "/api/anmeldungen" && request.method === "POST") {
         return await saveRegistration(request);
+      }
+
+      if (url.pathname === "/api/tageskasse" && request.method === "POST") {
+        return await saveBoxOfficeRegistration(request);
       }
 
       if (url.pathname === "/api/weeztix" && request.method === "POST") {
