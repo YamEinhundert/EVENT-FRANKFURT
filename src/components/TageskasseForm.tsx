@@ -61,7 +61,7 @@ export function TageskasseForm() {
             Tages- &amp; Abendkasse
           </span>
           <span className="mt-1 block text-sm text-muted-foreground">
-            Vor Ort zahlen · jetzt unverbindlich vormerken
+            Vor Ort zahlen · Einlass nur mit vorheriger Anmeldung
           </span>
         </span>
         <ChevronDown className="size-5 shrink-0 text-primary transition-transform group-open:rotate-180" />
@@ -89,8 +89,8 @@ export function TageskasseForm() {
           <form onSubmit={onSubmit} className="space-y-5">
             <div>
               <p className="text-sm leading-6 text-muted-foreground">
-                Melde dich vorab für die Tages- oder Abendkasse an. Die Vormerkung ist kein
-                garantiertes Ticket; bezahlt wird beim Einlass vor Ort.
+                Melde dich vorab für die Tages- oder Abendkasse an. Ohne vorherige Anmeldung ist
+                kein Einlass über die Tages- oder Abendkasse möglich. Bezahlt wird vor Ort.
               </p>
             </div>
 
