@@ -4,6 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 import flyerImg from "@/assets/hash-cup-flyer.png";
 import { WeeztixShop } from "@/components/WeeztixShop";
 import { EventCountdown } from "@/components/EventCountdown";
+import { TageskasseForm } from "@/components/TageskasseForm";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -117,6 +118,7 @@ function Index() {
       <section id="anmeldung" className="border-t border-border bg-card/40">
         <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
           <WeeztixShop />
+          <TageskasseForm />
         </div>
       </section>
 
