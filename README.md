@@ -16,4 +16,4 @@ npm run dev
 3. Deploy-Befehl: `npx wrangler deploy`
 4. Cloudflare legt die D1-Datenbank für das Binding `DB` beim ersten Deployment an.
 
-Die Formulareingänge findest du anschließend im Cloudflare-Dashboard unter **Storage & Databases → D1 → Studio → anmeldungen**.
+Die Formulareingänge findest du anschließend im Cloudflare-Dashboard unter **Storage & Databases → D1 → Studio → anmeldungen**. Von Weeztix übertragene, abgeschlossene Bestellungen werden nach Ticketart getrennt in **weeztix_artist**, **weeztix_aussteller**, **weeztix_vip**, **weeztix_gaesteliste** und **weeztix_sonstige** gespeichert. Jede Zeile entspricht einem Ticket bzw. Teilnehmer und enthält getrennte Angaben für Ticketinhaber und Besteller. `bestellung_json` und `ticket_json` bewahren zusätzlich den vollständigen übertragenen Payload auf.

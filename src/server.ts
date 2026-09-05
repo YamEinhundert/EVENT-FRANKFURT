@@ -26,6 +26,8 @@ type WeeztixOrder = {
   metadata?: unknown;
 };
 
+type WeeztixTicket = Record<string, unknown>;
+
 function findMetadataValue(value: unknown, wantedKeys: string[]): string {
   const wanted = new Set(wantedKeys.map((key) => key.toLowerCase()));
   const visit = (node: unknown): string => {
@@ -55,7 +57,7 @@ function findMetadataValue(value: unknown, wantedKeys: string[]): string {
   return visit(value);
 }
 
-function detectTicketType(order: WeeztixOrder) {
+function detectTicketType(order: WeeztixOrder): keyof typeof WEEZTIX_TABLES {
   const raw = JSON.stringify(order.tickets ?? []).toLowerCase();
   if (raw.includes("artist")) return "artist";
   if (raw.includes("aussteller") || raw.includes("exhibitor")) return "aussteller";
@@ -64,6 +66,56 @@ function detectTicketType(order: WeeztixOrder) {
     return "gaesteliste";
   }
   return "ticket";
+}
+
+const WEEZTIX_TABLES = {
+  artist: "weeztix_artist",
+  aussteller: "weeztix_aussteller",
+  vip: "weeztix_vip",
+  gaesteliste: "weeztix_gaesteliste",
+  ticket: "weeztix_sonstige",
+} as const;
+
+function weeztixTableName(ticketType: keyof typeof WEEZTIX_TABLES) {
+  return WEEZTIX_TABLES[ticketType];
+}
+
+function createWeeztixTableSql(tableName: string) {
+  return `CREATE TABLE IF NOT EXISTS ${tableName} (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ticket_datensatz_id TEXT NOT NULL UNIQUE,
+    bestell_id TEXT NOT NULL,
+    ticketart TEXT NOT NULL,
+    ticketname TEXT,
+    ticketinhaber_name TEXT NOT NULL,
+    ticketinhaber_email TEXT NOT NULL,
+    ticketinhaber_telefon TEXT,
+    besteller_name TEXT NOT NULL,
+    besteller_email TEXT NOT NULL,
+    besteller_telefon TEXT,
+    zugangscode TEXT,
+    bestellstatus TEXT,
+    erstellt_am TEXT NOT NULL,
+    empfangen_am TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    bestellung_json TEXT NOT NULL,
+    ticket_json TEXT NOT NULL
+  )`;
+}
+
+function ticketQuantity(ticket: WeeztixTicket) {
+  const quantity = Number(ticket.quantity ?? ticket.count ?? 1);
+  return Number.isInteger(quantity) && quantity > 0 && quantity <= 100 ? quantity : 1;
+}
+
+function ticketName(ticket: WeeztixTicket) {
+  const product =
+    ticket.ticket && typeof ticket.ticket === "object"
+      ? (ticket.ticket as Record<string, unknown>)
+      : undefined;
+  return clean(
+    ticket.ticket_name ?? ticket.ticketName ?? ticket.title ?? product?.name ?? ticket.name,
+    255,
+  );
 }
 
 async function importWeeztixOrder(request: Request) {
@@ -83,6 +135,7 @@ async function importWeeztixOrder(request: Request) {
 
   try {
     const order = (await request.json()) as WeeztixOrder;
+    const rawOrderPayload = JSON.stringify(order);
     const externalId = clean(order.guid, 100);
     const email = clean(order.email, 255).toLowerCase();
     const name = `${clean(order.firstname, 100)} ${clean(order.lastname, 100)}`.trim();
@@ -104,32 +157,126 @@ async function importWeeztixOrder(request: Request) {
     }
 
     const db = cloudflareEnv.DB.withSession("first-primary");
-    await db.prepare("ALTER TABLE anmeldungen ADD COLUMN quelle TEXT").run().catch(() => undefined);
-    await db.prepare("ALTER TABLE anmeldungen ADD COLUMN externe_id TEXT").run().catch(() => undefined);
-    await db.prepare("ALTER TABLE anmeldungen ADD COLUMN ticketanzahl INTEGER").run().catch(() => undefined);
-    await db
-      .prepare("CREATE UNIQUE INDEX IF NOT EXISTS anmeldungen_externe_id_idx ON anmeldungen (externe_id)")
-      .run();
 
-    const ticketCount = Array.isArray(order.tickets) ? order.tickets.length : 1;
-    await db
-      .prepare(
-        `INSERT OR IGNORE INTO anmeldungen
-          (anmeldeart, name, email, telefon, zugangscode, crew_anzahl, erstellt_am, quelle, externe_id, ticketanzahl)
-         VALUES (?, ?, ?, ?, NULL, NULL, ?, 'weeztix', ?, ?)`,
-      )
-      .bind(
-        detectTicketType(order),
-        name,
-        email,
-        phone,
-        clean(order.created_at, 50) || new Date().toISOString(),
-        externalId,
-        ticketCount,
-      )
-      .run();
+    const tickets = Array.isArray(order.tickets)
+      ? order.tickets.filter(
+          (ticket): ticket is WeeztixTicket => Boolean(ticket) && typeof ticket === "object",
+        )
+      : [];
+    const ticketEntries = tickets.length ? tickets : [{}];
+    const initializedTables = new Set<string>();
+    let savedTickets = 0;
 
-    return Response.json({ ok: true });
+    for (const [ticketIndex, ticket] of ticketEntries.entries()) {
+      const holderFirstName = findMetadataValue(ticket, [
+        "firstname",
+        "first_name",
+        "vorname",
+        "ticket holder first name",
+      ]);
+      const holderLastName = findMetadataValue(ticket, [
+        "lastname",
+        "last_name",
+        "nachname",
+        "ticket holder last name",
+      ]);
+      const explicitHolderName = findMetadataValue(ticket, [
+        "ticket holder",
+        "ticket holder name",
+        "ticketinhaber",
+        "teilnehmer",
+        "name des teilnehmers",
+      ]);
+      const holderName =
+        explicitHolderName || `${holderFirstName} ${holderLastName}`.trim() || name;
+      const holderEmail =
+        findMetadataValue(ticket, [
+          "email",
+          "e-mail",
+          "ticket holder email",
+          "ticketinhaber email",
+        ]).toLowerCase() || email;
+      const holderPhone =
+        findMetadataValue(ticket, [
+          "telefon",
+          "telefonnummer",
+          "phone",
+          "mobile",
+          "ticket holder phone",
+        ]) || phone;
+      const accessCode = findMetadataValue(ticket, [
+        "zugangscode",
+        "access code",
+        "coupon",
+        "coupon code",
+        "gutscheincode",
+      ]);
+      const ticketExternalId = clean(
+        ticket.guid ?? ticket.id ?? ticket.ticket_guid ?? ticket.ticketGuid,
+        100,
+      );
+      const ticketType = detectTicketType({ ...order, tickets: [ticket] });
+      const targetTable = weeztixTableName(ticketType);
+
+      if (!initializedTables.has(targetTable)) {
+        await db.prepare(createWeeztixTableSql(targetTable)).run();
+        await db
+          .prepare(
+            `CREATE INDEX IF NOT EXISTS ${targetTable}_bestell_id_idx ON ${targetTable} (bestell_id)`,
+          )
+          .run();
+        initializedTables.add(targetTable);
+      }
+
+      for (let unit = 0; unit < ticketQuantity(ticket); unit += 1) {
+        const ticketRecordId = `${externalId}:${ticketExternalId || ticketIndex + 1}:${unit + 1}`;
+        await db
+          .prepare(
+            `INSERT INTO ${targetTable}
+              (ticket_datensatz_id, bestell_id, ticketart, ticketname,
+               ticketinhaber_name, ticketinhaber_email, ticketinhaber_telefon,
+               besteller_name, besteller_email, besteller_telefon, zugangscode,
+               bestellstatus, erstellt_am, bestellung_json, ticket_json)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON CONFLICT(ticket_datensatz_id) DO UPDATE SET
+               ticketart = excluded.ticketart,
+               ticketname = excluded.ticketname,
+               ticketinhaber_name = excluded.ticketinhaber_name,
+               ticketinhaber_email = excluded.ticketinhaber_email,
+               ticketinhaber_telefon = excluded.ticketinhaber_telefon,
+               besteller_name = excluded.besteller_name,
+               besteller_email = excluded.besteller_email,
+               besteller_telefon = excluded.besteller_telefon,
+               zugangscode = excluded.zugangscode,
+               bestellstatus = excluded.bestellstatus,
+               erstellt_am = excluded.erstellt_am,
+               empfangen_am = CURRENT_TIMESTAMP,
+               bestellung_json = excluded.bestellung_json,
+               ticket_json = excluded.ticket_json`,
+          )
+          .bind(
+            ticketRecordId,
+            externalId,
+            ticketType,
+            ticketName(ticket) || null,
+            holderName,
+            holderEmail,
+            holderPhone || null,
+            name,
+            email,
+            phone || null,
+            accessCode || null,
+            status || null,
+            clean(order.created_at, 50) || new Date().toISOString(),
+            rawOrderPayload,
+            JSON.stringify(ticket),
+          )
+          .run();
+        savedTickets += 1;
+      }
+    }
+
+    return Response.json({ ok: true, saved_tickets: savedTickets });
   } catch (error) {
     console.error(error);
     return Response.json({ error: "Bestellung konnte nicht importiert werden." }, { status: 500 });
