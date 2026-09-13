@@ -1,49 +1,32 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, MapPin, Clock } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
-import flyerImg from "@/assets/hash-cup-flyer.png";
-import { WeeztixShop } from "@/components/WeeztixShop";
-import { EventCountdown } from "@/components/EventCountdown";
-import { TageskasseForm } from "@/components/TageskasseForm";
+import { ArrowDown, CalendarDays, Camera, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Canablanca Select 2026 – Frankfurt" },
+      { title: "Canablanca Mash Up – Frankfurt" },
       {
         name: "description",
         content:
-          "Canablanca Select – International Culture Event am 12.09.2026 in Frankfurt. Tickets direkt online über Weeztix.",
+          "Canablanca Mash Up Frankfurt. Danke für Mash Up 001. Das nächste Canablanca Mash Up kommt im Dezember 2026.",
       },
-      { property: "og:title", content: "Canablanca Select 2026 – Frankfurt" },
+      { property: "og:title", content: "Canablanca Mash Up – Danke Frankfurt" },
       {
         property: "og:description",
-        content: "International Culture Event · 12. September 2026 · Frankfurt am Main",
+        content: "Mash Up 001 ist Geschichte. Next Mash Up: Dezember 2026 in Frankfurt.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://canablanca.eu/" },
-      { property: "og:site_name", content: "Canablanca Select" },
+      { property: "og:site_name", content: "Canablanca Mash Up" },
       { property: "og:locale", content: "de_DE" },
-      {
-        property: "og:image",
-        content: "https://canablanca.eu/canablanca-select-2026-preview.png",
-      },
-      {
-        property: "og:image:secure_url",
-        content: "https://canablanca.eu/canablanca-select-2026-preview.png",
-      },
-      { property: "og:image:type", content: "image/png" },
-      { property: "og:image:width", content: "800" },
-      { property: "og:image:height", content: "684" },
-      {
-        property: "og:image:alt",
-        content: "Canablanca Select 2026 – Wappen mit zwei Löwen",
-      },
+      { property: "og:image", content: "https://canablanca.eu/mash-up-001-danke.jpg" },
+      { property: "og:image:secure_url", content: "https://canablanca.eu/mash-up-001-danke.jpg" },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: "1024" },
+      { property: "og:image:height", content: "1536" },
+      { property: "og:image:alt", content: "Canablanca Mash Up – Danke Frankfurt" },
       { name: "twitter:card", content: "summary_large_image" },
-      {
-        name: "twitter:image",
-        content: "https://canablanca.eu/canablanca-select-2026-preview.png",
-      },
+      { name: "twitter:image", content: "https://canablanca.eu/mash-up-001-danke.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://canablanca.eu/" }],
   }),
@@ -52,99 +35,96 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(211,167,74,0.11),transparent_42%),linear-gradient(to_bottom,#06170e,#031008)]" />
-        <div className="relative mx-auto max-w-5xl px-6 py-28 text-center sm:py-36">
-          <img
-            src="/canablanca-select-2026-preview.png"
-            alt="Canablanca Wappen mit zwei Löwen"
-            className="mx-auto mb-6 h-auto w-full max-w-sm mix-blend-screen"
-          />
-          <p className="text-sm uppercase tracking-[0.4em] text-primary">präsentiert</p>
-          <h1 className="mt-6 gold-gradient-text text-6xl leading-none sm:text-8xl">
-            Canablanca
-            <br />
-            Select 2026
-          </h1>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-2">
-              <CalendarDays className="size-4 text-primary" /> 12. September 2026
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-2">
-              <MapPin className="size-4 text-primary" /> Frankfurt am Main
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-2">
-              <Clock className="size-4 text-primary" /> 12:00 – 02:00 Uhr
-            </span>
+    <main className="min-h-screen overflow-hidden bg-background text-foreground">
+      <section className="relative isolate min-h-[92vh] overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(211,167,74,0.16),transparent_40%),linear-gradient(to_bottom,#06170e,#020b06)]" />
+        <div className="relative mx-auto grid min-h-[92vh] max-w-6xl items-center gap-12 px-6 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:py-24">
+          <div className="text-center lg:text-left">
+            <p className="text-xs font-semibold uppercase tracking-[0.45em] text-primary sm:text-sm">
+              Mash Up 001 · Frankfurt
+            </p>
+            <h1 className="mt-6 gold-gradient-text text-7xl leading-[0.86] sm:text-8xl lg:text-9xl">
+              Danke.
+            </h1>
+            <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-foreground/80 lg:mx-0">
+              Unser erstes Canablanca Mash Up ist Geschichte. Danke an alle Artists, Partner,
+              Helfer – und vor allem an euch, die diesen Tag besonders gemacht haben.
+            </p>
+            <div className="mt-10 inline-flex flex-col items-center gap-2 border-y border-primary/40 px-8 py-5 lg:items-start">
+              <span className="font-display text-2xl tracking-[0.12em] text-primary">
+                NEXT MASH UP
+              </span>
+              <span className="font-display text-5xl tracking-wide sm:text-6xl">DEZEMBER 2026</span>
+              <span className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.2em] text-muted-foreground">
+                <MapPin className="size-4 text-primary" /> Frankfurt am Main
+              </span>
+            </div>
+            <p className="mt-6 text-sm uppercase tracking-[0.25em] text-muted-foreground">
+              Datum, Location &amp; Line-up folgen
+            </p>
           </div>
-          <EventCountdown />
+
+          <figure className="relative mx-auto w-full max-w-xl">
+            <div className="absolute -inset-5 rounded-[2rem] bg-primary/10 blur-3xl" />
+            <img
+              src="/mash-up-001-danke.jpg"
+              alt="Canablanca Mash Up – Dankesmotiv für Frankfurt"
+              className="relative w-full rounded-2xl border border-primary/50 shadow-[0_30px_100px_-35px_rgba(211,167,74,0.55)]"
+            />
+          </figure>
+
           <a
-            href="#anmeldung"
-            className="mt-10 inline-block rounded-lg bg-primary px-10 py-4 font-display text-xl tracking-widest text-primary-foreground transition-opacity hover:opacity-90"
+            href="#impressionen"
+            aria-label="Zu den Impressionen"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 text-primary/80 transition-colors hover:text-primary"
           >
-            Jetzt anmelden
+            <ArrowDown className="size-7 animate-bounce" />
           </a>
         </div>
       </section>
 
-      {/* Flyer */}
-      <section className="border-y border-border bg-card/40">
-        <div className="mx-auto flex max-w-3xl flex-col items-center px-6 py-20">
-          <div className="relative overflow-hidden rounded-xl border border-primary/60 shadow-[0_0_60px_-22px_var(--gold)]">
-            <img
-              src={flyerImg}
-              alt="Canablanca Select Frankfurt Event-Flyer mit QR-Code"
-              className="block max-h-[90vh] w-auto max-w-full object-contain"
-            />
-            <span className="pointer-events-none absolute bottom-[6.1%] left-[15.9%] block w-[17%]">
-              <QRCodeSVG
-                value="https://canablanca.eu"
-                size={220}
-                level="H"
-                bgColor="transparent"
-                fgColor="#111812"
-                marginSize={1}
-                className="h-auto w-full"
-                title="QR-Code zu canablanca.eu"
-              />
-            </span>
+      <section id="impressionen" className="border-y border-border bg-card/40">
+        <div className="mx-auto max-w-6xl px-6 py-24 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.42em] text-primary">
+            Mash Up 001 · September 2026
+          </p>
+          <h2 className="mt-4 text-5xl sm:text-7xl">Impressionen</h2>
+          <div className="mx-auto mt-10 flex min-h-72 max-w-4xl flex-col items-center justify-center rounded-2xl border border-dashed border-primary/40 bg-background/50 px-6">
+            <Camera className="size-10 text-primary" />
+            <p className="mt-5 font-display text-3xl tracking-widest">DIE GALERIE KOMMT</p>
+            <p className="mt-2 max-w-md text-muted-foreground">
+              Fotos und Momente vom ersten Canablanca Mash Up folgen hier in Kürze.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Tickets und Anmeldung */}
-      <section id="anmeldung" className="border-t border-border bg-card/40">
-        <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
-          <WeeztixShop />
-          <TageskasseForm />
+      <section className="relative isolate overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(211,167,74,0.12),transparent_50%)]" />
+        <div className="relative mx-auto max-w-5xl px-6 py-24 text-center">
+          <CalendarDays className="mx-auto size-8 text-primary" />
+          <p className="mt-5 text-sm uppercase tracking-[0.35em] text-primary">Das war erst der Anfang</p>
+          <h2 className="mt-5 text-5xl sm:text-7xl">Wir sehen uns im Dezember.</h2>
+          <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
+            Same vibes. Higher places. Alle Details zum nächsten Mash Up folgen.
+          </p>
         </div>
       </section>
 
-      <footer className="mx-auto max-w-6xl px-6 py-12 text-sm text-muted-foreground">
-        <p className="font-display text-xl tracking-widest text-primary">CANABLANCA SELECT</p>
-        <p className="mt-2">
-          International Culture Event · 12.09.2026 · Frankfurt am Main · Zutritt ab 18 Jahren.
-          Teilnahme nur im Rahmen der geltenden gesetzlichen Bestimmungen.
-        </p>
-        <nav className="mt-6" aria-label="Rechtliche Informationen">
-          <Link
-            to="/impressum"
-            className="underline decoration-primary/60 underline-offset-4 transition-colors hover:text-primary"
-          >
-            Impressum
-          </Link>
-          <span aria-hidden="true" className="mx-3">
-            ·
-          </span>
-          <Link
-            to="/datenschutz"
-            className="underline decoration-primary/60 underline-offset-4 transition-colors hover:text-primary"
-          >
-            Datenschutz
-          </Link>
-        </nav>
+      <footer className="border-t border-border bg-card/30">
+        <div className="mx-auto max-w-6xl px-6 py-12 text-sm text-muted-foreground">
+          <p className="font-display text-2xl tracking-widest text-primary">CANABLANCA MASH UP</p>
+          <p className="mt-2">Music · People · Plants · Culture · Frankfurt am Main</p>
+          <nav className="mt-6" aria-label="Rechtliche Informationen">
+            <Link to="/impressum" className="underline decoration-primary/60 underline-offset-4 hover:text-primary">
+              Impressum
+            </Link>
+            <span aria-hidden="true" className="mx-3">·</span>
+            <Link to="/datenschutz" className="underline decoration-primary/60 underline-offset-4 hover:text-primary">
+              Datenschutz
+            </Link>
+          </nav>
+        </div>
       </footer>
     </main>
   );
